@@ -388,6 +388,19 @@ namespace Windows.UI.Xaml
             {
                 ShouldLookupImplicitStyles = true;
             }
+
+            SizeChanged += (s, e) =>
+            {
+                if (((double)GetValue(ActualWidthProperty)) != e.NewSize.Width)
+                {
+                    SetValue(ActualWidthProperty, e.NewSize.Width);
+                }
+
+                if (((double)GetValue(ActualHeightProperty)) != e.NewSize.Height)
+                {
+                    SetValue(ActualHeightProperty, e.NewSize.Height);
+                }
+            };
         }
 
 #region Resources
