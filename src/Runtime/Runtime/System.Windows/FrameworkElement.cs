@@ -1471,6 +1471,29 @@ namespace Windows.UI.Xaml
             // Try to find an implicit style
             object implicitStyle = FrameworkElement.FindImplicitStyleResource(this, GetType());
 
+            var txt = this as TextBlock;
+            if (txt != null)
+            {
+                var result = VisualTreeHelper.GetParent(txt);
+                var contentPresenter = txt.INTERNAL_VisualParent as ContentPresenter;
+
+                if (contentPresenter != null) //this should only be in the templated controls
+                {
+                    FrameworkElement parentElement = contentPresenter.INTERNAL_VisualParent as FrameworkElement;
+                    do
+                    {
+                        if (parentElement is Control)
+                        {
+                            var fram = parentElement as Control;
+                            if (fram.ShouldOverwriteGlobalStyles)
+                                return;
+                            else
+                                break;
+                        }
+                        parentElement = parentElement.INTERNAL_VisualParent as FrameworkElement;
+                    } while (parentElement != null);
+                }
+            }
             // Set the flag associated with the StyleProperty
             HasImplicitStyleFromResources = implicitStyle != DependencyProperty.UnsetValue;
             SetImplicitReferenceValue(StyleProperty, implicitStyle);

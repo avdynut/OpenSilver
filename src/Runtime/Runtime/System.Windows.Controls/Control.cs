@@ -77,6 +77,8 @@ namespace Windows.UI.Xaml.Controls
             }
         }
 
+        public bool ShouldOverwriteGlobalStyles { get; set; }
+
         private bool _isDisabled = false;
 
         /// <summary>
