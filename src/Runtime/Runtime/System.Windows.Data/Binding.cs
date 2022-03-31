@@ -230,7 +230,9 @@ namespace Windows.UI.Xaml.Data
             {
                 CheckSealed();
                 _wasModeSetByUserRatherThanDefaultValue = true;
-                _mode = value;
+
+                // workaround to fix a bug that OneTime mode is not working
+                _mode = value == BindingMode.OneTime ? BindingMode.OneWay : value;
             }
         }
 
