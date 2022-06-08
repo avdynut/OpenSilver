@@ -325,9 +325,9 @@ namespace Windows.UI.Xaml.Data
             }
         }
 
-        internal void OnSourceAvailable()
+        internal void OnSourceAvailable(bool lastAttempt)
         {
-            AttachToContext(true);
+            AttachToContext(lastAttempt);
             if (_bindingSource != null)
             {
                 _propertyPathWalker.Update(_bindingSource);
@@ -610,13 +610,13 @@ namespace Windows.UI.Xaml.Data
         private void OnTargetInheritedContextChanged(object sender, EventArgs e)
         {
             Target.InheritedContextChanged -= new EventHandler(OnTargetInheritedContextChanged);
-            OnSourceAvailable();
+            OnSourceAvailable(false);
         }
 
         private void OnMentorLoaded(object sender, RoutedEventArgs e)
         {
             ((FrameworkElement)sender).Loaded -= new RoutedEventHandler(OnMentorLoaded);
-            OnSourceAvailable();
+            OnSourceAvailable(true);
         }
 
         private void AttachToContext(bool lastAttempt)
@@ -762,7 +762,7 @@ namespace Windows.UI.Xaml.Data
                     // the (visual) parent - a panel.
                     if (dd == null)
                     {
-                        Panel panel = fe as Panel;
+                        Panel panel = (fe.Parent ?? VisualTreeHelper.GetParent(fe)) as Panel;
                         if (panel != null && panel.IsItemsHost)
                         {
                             dd = panel;
