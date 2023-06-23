@@ -104,6 +104,12 @@ namespace System
             set { INTERNAL_VisualTreeManager.EnablePerformanceLogging = value; }
         }
 
+        public bool SaveElementAttachTime
+        {
+            get => INTERNAL_VisualTreeManager.SaveAttachTime;
+            set => INTERNAL_VisualTreeManager.SaveAttachTime = value;
+        }
+
         /// <summary>
         /// When True, do not apply the CSS properties of the UI elements that are not visible.
         /// Those property are applied later, when the control becomes visible.

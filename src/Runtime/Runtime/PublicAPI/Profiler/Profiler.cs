@@ -147,6 +147,14 @@ namespace CSHTML5
             Interop.ExecuteJavaScriptVoid(
                 $"console.timeLog({CSHTML5.INTERNAL_InteropImplementation.GetVariableStringForJS(label)})");
         }
+
+        public static TimeSpan MeasureTime(Action action)
+        {
+            var sw = Stopwatch.StartNew();
+            action();
+            sw.Stop();
+            return sw.Elapsed;
+        }
     }
 
     class PerformanceCounter

@@ -125,6 +125,7 @@ namespace CSHTML5.Internal
         }
 
         internal static bool EnablePerformanceLogging;
+        internal static bool SaveAttachTime;
         internal static bool EnableOptimizationWhereCollapsedControlsAreNotRendered = true;
         internal static bool EnableOptimizationWhereCollapsedControlsAreNotLoaded = false;
         internal static bool EnableOptimizationWhereCollapsedControlsAreLoadedLast = false;
@@ -410,7 +411,15 @@ if(nextSibling != undefined) {
                         Profiler.ConsoleTime(label);
                     }
 
-                    AttachVisualChild_Private(child, parent, index);
+                    if (SaveAttachTime)
+                    {
+                        var elapsed = Profiler.MeasureTime(() => AttachVisualChild_Private(child, parent, index));
+                        INTERNAL_HtmlDomManager.SetDomElementAttribute(child.INTERNAL_OuterDomElement, "attach-time-ms", elapsed.TotalMilliseconds);
+                    }
+                    else
+                    {
+                        AttachVisualChild_Private(child, parent, index);
+                    }                    
 
                     if (EnablePerformanceLogging)
                     {
