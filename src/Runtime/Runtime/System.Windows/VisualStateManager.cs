@@ -35,7 +35,7 @@ namespace System.Windows
         /// <param name="stateName">The new state that the control is in.</param>
         /// <param name="useTransitions">Whether to use transition animations.</param>
         /// <returns>true if the state changed successfully, false otherwise.</returns>
-        private static bool GoToStateCommon(Control control, FrameworkElement stateGroupsRoot, string stateName, bool useTransitions)
+        private static bool GoToStateCommon(IControl control, DependencyObject stateGroupsRoot, string stateName, bool useTransitions)
         {
             if (stateName == null)
             {
@@ -96,12 +96,18 @@ namespace System.Windows
         /// </exception>
         public static bool GoToState(Control control, string stateName, bool useTransitions)
         {
+            return GoToState((IControl)control, stateName, useTransitions);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static bool GoToState(IControl control, string stateName, bool useTransitions)
+        {
             if (control == null)
             {
                 throw new ArgumentNullException(nameof(control));
             }
 
-            FrameworkElement stateGroupsRoot = control.StateGroupsRoot;
+            DependencyObject stateGroupsRoot = ((IInternalFrameworkElement)control).StateGroupsRoot;
 
             return GoToStateCommon(control, stateGroupsRoot, stateName, useTransitions);
         }
@@ -115,6 +121,12 @@ namespace System.Windows
         /// <returns>true if the state changed successfully, false otherwise.</returns>
         [EditorBrowsable(EditorBrowsableState.Advanced)]
         public static bool GoToElementState(FrameworkElement stateGroupsRoot, string stateName, bool useTransitions)
+        {
+            return GoToElementState((DependencyObject)stateGroupsRoot, stateName, useTransitions);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static bool GoToElementState(DependencyObject stateGroupsRoot, string stateName, bool useTransitions)
         {
             if (stateGroupsRoot == null)
             {
@@ -155,6 +167,17 @@ namespace System.Windows
             VisualState state,
             bool useTransitions)
         {
+            return GoToStateCore((IControl)control, templateRoot, stateName, group, state, useTransitions);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        protected virtual bool GoToStateCore(IControl control,
+            DependencyObject templateRoot,
+            string stateName,
+            VisualStateGroup group,
+            VisualState state,
+            bool useTransitions)
+        {
             return GoToStateInternal(control, templateRoot, group, state, useTransitions);
         }
 
@@ -184,6 +207,12 @@ namespace System.Windows
         /// </exception>
         public static VisualStateManager GetCustomVisualStateManager(FrameworkElement obj)
         {
+            return GetCustomVisualStateManager((DependencyObject)obj);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static VisualStateManager GetCustomVisualStateManager(DependencyObject obj)
+        {
             if (obj == null)
             {
                 throw new ArgumentNullException(nameof(obj));
@@ -205,6 +234,12 @@ namespace System.Windows
         /// obj is null.
         /// </exception>
         public static void SetCustomVisualStateManager(FrameworkElement obj, VisualStateManager value)
+        {
+            SetCustomVisualStateManager((IFrameworkElement)obj, value);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static void SetCustomVisualStateManager(IFrameworkElement obj, VisualStateManager value)
         {
             if (obj == null)
             {
@@ -236,7 +271,7 @@ namespace System.Windows
                 typeof(VisualStateManager),
                 new PropertyMetadata((object)null));
 
-        internal static Collection<VisualStateGroup> GetVisualStateGroupsInternal(FrameworkElement obj)
+        internal static Collection<VisualStateGroup> GetVisualStateGroupsInternal(DependencyObject obj)
         {
             return (Collection<VisualStateGroup>)obj.GetValue(VisualStateGroupsProperty);                
         }
@@ -255,6 +290,12 @@ namespace System.Windows
         /// obj is null.
         /// </exception>
         public static IList GetVisualStateGroups(FrameworkElement obj)
+        {
+            return GetVisualStateGroups((DependencyObject)obj);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IList GetVisualStateGroups(DependencyObject obj)
         {
             if (obj == null)
             {
@@ -294,8 +335,8 @@ namespace System.Windows
             return false;
         }
 
-        private static bool GoToStateInternal(Control control,
-            FrameworkElement stateGroupsRoot,
+        private static bool GoToStateInternal(IControl control,
+            DependencyObject stateGroupsRoot,
             VisualStateGroup group,
             VisualState state,
             bool useTransitions)
