@@ -11,6 +11,7 @@
 *  
 \*====================================================================================*/
 
+using OpenSilver.Internal.Xaml;
 using System.Windows;
 
 namespace OpenSilver.WebAssembly;
@@ -46,7 +47,7 @@ public static class Runner
 
         if (await OpenSilverRuntime.StartAsync())
         {
-            return createAppDelegate();
+            return InitializeApp(createAppDelegate());
         }
 
         throw new InvalidOperationException("An unexpected error occurred. Please check the browser console for more details.");
@@ -78,7 +79,7 @@ public static class Runner
 
         if (await OpenSilverRuntime.StartAsync())
         {
-            return await createAppDelegate();
+            return InitializeApp(await createAppDelegate());
         }
 
         throw new InvalidOperationException("An unexpected error occurred. Please check the browser console for more details.");
@@ -99,4 +100,13 @@ public static class Runner
     /// </remarks>
     public static Task<T> RunApplicationAsync<T>() where T : Application, new()
         => RunApplicationAsync(() => new T());
+
+    private static T InitializeApp<T>(T app) where T : Application
+    {
+        if (app is IComponentConnector componentConnector)
+        {
+            componentConnector.InitializeComponent();
+        }
+        return app;
+    }
 }

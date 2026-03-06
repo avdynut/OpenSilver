@@ -14,6 +14,7 @@
 using CSHTML5.Internal;
 using DotNetForHtml5.Core;
 using Microsoft.JSInterop;
+using OpenSilver.Internal.Xaml;
 using OpenSilver.MauiHybrid.JavaScript;
 using OpenSilver.MauiHybrid.Threading;
 using System.Diagnostics;
@@ -51,10 +52,17 @@ namespace OpenSilver.MauiHybrid.Runner
             var context = InitializeOpenSilver();
             var tcs = new TaskCompletionSource<T>();
 
-            context.Post(async (s) => {
+            context.Post(async (s) =>
+            {
                 try
                 {
                     var app = await createAppDelegate();
+
+                    if (app is IComponentConnector componentConnector)
+                    {
+                        componentConnector.InitializeComponent();
+                    }
+
                     tcs.SetResult(app);
                 }
                 catch (Exception ex)
@@ -141,7 +149,8 @@ namespace OpenSilver.MauiHybrid.Runner
             thread.Start();
 
             INTERNAL_Simulator.OpenSilverDispatcherBeginInvoke = (method) => context.Post((s) => method(), null);
-            INTERNAL_Simulator.OpenSilverDispatcherInvoke = (method, _) => {
+            INTERNAL_Simulator.OpenSilverDispatcherInvoke = (method, _) =>
+            {
                 if (context.CheckAccess())
                 {
                     method();

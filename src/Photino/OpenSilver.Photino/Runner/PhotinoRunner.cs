@@ -11,6 +11,7 @@
 *
 \*====================================================================================*/
 
+using OpenSilver.Internal.Xaml;
 using OpenSilver.Photino.JavaScript;
 using OpenSilver.MauiHybrid.Threading;
 using System.Text.Json;
@@ -192,10 +193,17 @@ namespace OpenSilver.Photino.Runner
 
             var tcs = new TaskCompletionSource<T>();
 
-            context.Post(async (s) => {
+            context.Post(async (s) =>
+            {
                 try
                 {
                     var app = await createAppDelegate();
+
+                    if (app is IComponentConnector componentConnector)
+                    {
+                        componentConnector.InitializeComponent();
+                    }
+
                     tcs.SetResult(app);
                 }
                 catch (Exception ex)
