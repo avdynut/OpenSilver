@@ -293,8 +293,15 @@ namespace OpenSilver.Compiler
                         _fileNameWithPathRelativeToProjectRoot,
                         parameters.ResultingFindNameCalls);
 
+                    string additionalConstructors = isApp ?
+                        @"Private Sub New(stub as Global.OpenSilver.XamlDesignerConstructorStub)
+    InitializeComponent()
+End Sub
+" : string.Empty;
+
                     // Wrap everything into a partial class:
-                    string partialClass = GeneratePartialClass(initializeComponentMethod,
+                    string partialClass = GeneratePartialClass(additionalConstructors,
+                                                               initializeComponentMethod,
                                                                connectMethod,
                                                                parameters.ResultingFieldsForNamedElements,
                                                                className,
@@ -1370,7 +1377,7 @@ namespace OpenSilver.Compiler
                                         string elementType = _settings.Inspector.GetCSharpEquivalentOfXamlTypeAsString(
                                             propertyOwnerTypeNS, propertyOwnerTypeName, assemblyNameIfAny, element);
 
-                                        string markupExtension =
+                                        string markupExtension = 
                                             $"CType({childUid},{IMarkupExtensionClass}).ProvideValue(New Global.System.ServiceProvider({parentUid}, Nothing))";
 
                                         parameters.AppendLine(
