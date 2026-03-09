@@ -58,7 +58,7 @@ namespace OpenSilver.Compiler
                 builder.Append(' ', 4).AppendLine($"interface {IComponentConnectorClass} with")
                     .Append(' ', 4 * 2).AppendLine("[<global.System.Diagnostics.DebuggerNonUserCode>]")
                     .Append(' ', 4 * 2).AppendLine("[<global.System.ComponentModel.EditorBrowsable(global.System.ComponentModel.EditorBrowsableState.Never)>]")
-                    .Append(' ', 4 * 2 ).AppendLine($"member this.Connect({componentIdParam}: int, {targetParam}: obj): unit = ");
+                    .Append(' ', 4 * 2).AppendLine($"member this.Connect({componentIdParam}: int, {targetParam}: obj): unit = ");
 
                 if (_entries.Count > 0)
                 {
@@ -211,7 +211,6 @@ namespace OpenSilver.Compiler
 
 
         private static string GeneratePartialClass(
-            string additionalConstructors,
             string initializeComponentMethod,
             string connectMethod,
             List<string> fieldsForNamedElements,
@@ -235,8 +234,6 @@ type {className}() =
     inherit {baseType}()
     let mutable contentLoaded = false
 {fieldsForNamedElementsMergedCode}
-
-{additionalConstructors}
 
 {initializeComponentMethod}
 
