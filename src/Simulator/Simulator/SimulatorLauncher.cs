@@ -9,14 +9,17 @@ namespace OpenSilver.Simulator
 
         public static int Start(Type userApplicationType, SimulatorLaunchParameters parameters = null)
         {
-            if (userApplicationType == null)
-            {
-                throw new ArgumentNullException(nameof(userApplicationType));
-            }
+            ArgumentNullException.ThrowIfNull(userApplicationType);
 
             Parameters = parameters ?? new SimulatorLaunchParameters();
 
-            return Start(() => Activator.CreateInstance(userApplicationType), userApplicationType.Assembly, parameters);
+            void appCreationDelegate()
+            {
+                var app = Activator.CreateInstance(userApplicationType);
+                var initializeComponentMethod = userApplicationType.GetMethod("InitializeComponent");
+                initializeComponentMethod?.Invoke(app, null);
+            }
+            return Start(appCreationDelegate, userApplicationType.Assembly, parameters);
         }
 
         public static int Start(Action appCreationDelegate, Assembly appAssembly, SimulatorLaunchParameters parameters = null)
