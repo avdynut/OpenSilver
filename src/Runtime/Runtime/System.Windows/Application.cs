@@ -60,15 +60,6 @@ namespace System.Windows
 
         public Application(string rootDivId)
         {
-            if (XamlDesignerConstructorStub.CreateAppStub)
-            {
-                if (this is IComponentConnector componentConnector)
-                {
-                    componentConnector.InitializeComponent();
-                }
-                return;
-            }
-
             ArgumentException.ThrowIfNullOrEmpty(rootDivId);
 
             _rootDiv = new(rootDivId);
@@ -706,6 +697,7 @@ namespace System.Windows
                 handler(null, null);
             }
         }
+
 
         #region Exit event
 
